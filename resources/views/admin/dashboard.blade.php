@@ -13,9 +13,16 @@
             <!-- Manage Materias -->
             <div class="bg-white rounded-lg shadow p-6">
                 <h2 class="text-xl font-bold text-gray-900 mb-4">Gestionar Materias</h2>
-                <p class="text-gray-600 mb-4">Crea, edita o elimina materias del sistema</p>
                 <a href="{{ route('admin.materias') }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md">
                     Ir a Materias
+                </a>
+            </div>
+
+            <!-- Manage Horarios -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Gestionar Horarios</h2>
+                <a href="{{ route('admin.horarios') }}" class="inline-block bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md">
+                    Ir a Horarios
                 </a>
             </div>
         </div>

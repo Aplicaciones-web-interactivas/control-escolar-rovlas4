@@ -18,4 +18,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin', [AdminController::class, 'indexAdmin'])->name('admin.dashboard');
     Route::get('/admin/materias', [AdminController::class, 'indexMaterias'])->name('admin.materias');
     Route::post('/admin/materias', [AdminController::class, 'saveMateria'])->name('admin.materias.save');
+    Route::get('/admin/horarios', [AdminController::class, 'indexHorarios'])->name('admin.horarios');
+    Route::post('/admin/horarios', [AdminController::class, 'saveHorario'])->name('admin.horarios.save');
 });

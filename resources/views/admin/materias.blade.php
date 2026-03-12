@@ -51,7 +51,7 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach ($materias as $materia)
-                                <tr class="hover:bg-gray-50">
+                                <tr>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $materia->id }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $materia->nombre }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
