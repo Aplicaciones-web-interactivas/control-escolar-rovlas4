@@ -8,11 +8,11 @@
     <title>Control Escolar</title>
 </head>
 <body class="bg-gray-100">
-    <nav class="fixed top-0 left-0 w-full bg-blue-600 shadow-lg z-50">
+    <nav class="fixed top-0 left-0 w-full bg-red-800 shadow-lg z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center space-x-6">
-                    <a href="{{ route('admin.dashboard') }}" class="text-white text-lg font-bold hover:text-blue-100 transition">Control Escolar</a>
+                    <a href="{{ route('admin.dashboard') }}" class="text-white text-lg font-bold transition">Control Escolar</a>
                     @auth
                         <a href="{{ route('admin.materias') }}" class="text-blue-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Materias</a>
                     @endauth
