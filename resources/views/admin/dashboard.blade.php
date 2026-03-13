@@ -9,14 +9,23 @@
         </div>
 
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Manage Materias -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Cantidad de Materias -->
             <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-xl font-bold text-gray-900 mb-4">Gestionar Materias</h2>
-                <p class="text-gray-600 mb-4">Crea, edita o elimina materias del sistema</p>
-                <a href="{{ route('admin.materias') }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md">
-                    Ir a Materias
-                </a>
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Materias Registradas</h2>
+                <p class="text-3xl font-bold text-blue-600">{{ $cantmaterias }}</p>
+            </div>
+
+            <!-- Cantidad de Horarios -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Horarios Registrados</h2>
+                <p class="text-3xl font-bold text-green-600">{{ $canthorarios }}</p>
+            </div>
+
+            <!-- Cantidad de Grupos -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Grupos Registrados</h2>
+                <p class="text-3xl font-bold text-yellow-600">{{ $cantgrupos }}</p>
             </div>
         </div>
     </div>
