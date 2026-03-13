@@ -43,21 +43,21 @@
                     <table class="min-w-full divide-y">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left font-medium">ID</th>
-                                <th class="px-6 py-3 text-left font-medium">Nombre</th>
                                 <th class="px-6 py-3 text-left font-medium">Clave</th>
-                                <th class="px-6 py-3 text-left font-medium">Fecha de Creación</th>
+                                <th class="px-6 py-3 text-left font-medium">Nombre</th>
+                                <th class="px-6 py-3 text-left font-medium">Acciones</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach ($materias as $materia)
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $materia->id }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $materia->nombre }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                             {{ $materia->clave }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $materia->created_at->format('d/m/Y H:i') }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $materia->nombre }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
+                                        <a href="{{ route('admin.materias.edit', $materia->id) }}" class="text-blue-600 hover:text-blue-900">Editar</a>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

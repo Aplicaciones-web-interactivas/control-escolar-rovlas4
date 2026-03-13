@@ -6,13 +6,17 @@ use App\Models\Materia;
 use App\Models\usuario;
 use App\Models\inscripcion;
 use App\Models\horario;
+use App\Models\grupo;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
     public function indexAdmin()
     {        
-        return view('admin.dashboard');
+        $cantmaterias = Materia::count();
+        $canthorarios = horario::count();
+        $cantgrupos = grupo::count();
+        return view('admin.dashboard', compact('cantmaterias', 'canthorarios', 'cantgrupos'));
     }
 
     public function indexMaterias()
@@ -31,6 +35,26 @@ class AdminController extends Controller
         Materia::create($validated);
 
         return redirect()->route('admin.materias')->with('success', 'Materia creada exitosamente!');
+    }
+
+    public function editMateria($id)
+    {
+        $materia = Materia::findOrFail($id);
+        return view('admin.materias-edit', compact('materia'));
+    }
+
+    public function updateMateria(Request $request, $id)
+    {
+        $materia = Materia::findOrFail($id);
+        
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'clave' => 'required|string|max:50|unique:materias,clave,' . $id,
+        ]);
+
+        $materia->update($validated);
+
+        return redirect()->route('admin.materias')->with('success', 'Materia actualizada exitosamente!');
     }
 
     public function indexHorarios()
@@ -63,5 +87,79 @@ class AdminController extends Controller
         ]);
 
         return redirect()->route('admin.horarios')->with('success', 'Horario creado exitosamente!');
+    }
+
+    public function editHorario($id)
+    {
+        $horario = horario::findOrFail($id);
+        $materias = Materia::all();
+        $maestros = usuario::where('activo', true)->get();
+        return view('admin.horarios-edit', compact('horario', 'materias', 'maestros'));
+    }
+
+    public function updateHorario(Request $request, $id)
+    {
+        $horario = horario::findOrFail($id);
+        
+        $validated = $request->validate([
+            'materia_id' => 'required|exists:materias,id',
+            'maestro_id' => 'required|exists:usuarios,id',
+            'hora_inicio' => 'required|date_format:H:i',
+            'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
+            'dias_arr' => 'required|array|min:1',
+        ]);
+
+        $dias = implode(',', $validated['dias_arr']);
+
+        $horario->update([
+            'materia_id' => $validated['materia_id'],
+            'maestro_id' => $validated['maestro_id'],
+            'hora_inicio' => $validated['hora_inicio'],
+            'hora_fin' => $validated['hora_fin'],
+            'dias' => $dias,
+        ]);
+
+        return redirect()->route('admin.horarios')->with('success', 'Horario actualizado exitosamente!');
+    }
+
+    public function indexGrupos()
+    {
+        $grupos = grupo::with(['horario.materia', 'horario.maestro'])->get();
+        $horarios = horario::with(['materia', 'maestro'])->get();
+        
+        return view('admin.grupos', compact('grupos', 'horarios'));
+    }
+
+    public function saveGrupo(Request $request)
+    {
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'horario_id' => 'required|exists:horarios,id',
+        ]);
+
+        grupo::create($validated);
+
+        return redirect()->route('admin.grupos')->with('success', 'Grupo creado exitosamente!');
+    }
+
+    public function editGrupo($id)
+    {
+        $grupo = grupo::findOrFail($id);
+        $horarios = horario::with(['materia', 'maestro'])->get();
+        return view('admin.grupos-edit', compact('grupo', 'horarios'));
+    }
+
+    public function updateGrupo(Request $request, $id)
+    {
+        $grupo = grupo::findOrFail($id);
+        
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'horario_id' => 'required|exists:horarios,id',
+        ]);
+
+        $grupo->update($validated);
+
+        return redirect()->route('admin.grupos')->with('success', 'Grupo actualizado exitosamente!');
     }
 }
