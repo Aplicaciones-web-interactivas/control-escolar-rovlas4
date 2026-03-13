@@ -8,34 +8,9 @@
             <h1 class="text-3xl font-bold text-gray-900">Gestionar Horarios</h1>
         </div>
 
-        <!-- Form Section -->
+        <!-- Form -->
         <div class="bg-white rounded-lg shadow p-6 mb-8">
             <h2 class="text-xl font-bold text-gray-900 mb-6">Nuevo Horario</h2>
-            
-            @if ($errors->any())
-                <div class="rounded-md bg-red-50 p-4 mb-4">
-                    <div class="flex">
-                        <div class="ml-3">
-                            <h3 class="text-sm font-medium text-red-800 mb-2">Errores en el formulario:</h3>
-                            <ul class="list-disc list-inside text-sm text-red-700">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            @endif
-
-            @if (session('success'))
-                <div class="rounded-md bg-green-50 p-4 mb-4">
-                    <div class="flex">
-                        <div class="ml-3">
-                            <h3 class="text-sm font-medium text-green-800">{{ session('success') }}</h3>
-                        </div>
-                    </div>
-                </div>
-            @endif
 
             <form action="{{ route('admin.horarios.save') }}" method="POST" class="space-y-6">
                 @csrf
@@ -53,9 +28,6 @@
                                 </option>
                             @endforeach
                         </select>
-                        @error('materia_id')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
                     </div>
 
                     <!-- Maestro -->
@@ -70,9 +42,6 @@
                                 </option>
                             @endforeach
                         </select>
-                        @error('maestro_id')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
                     </div>
 
                     <!-- Hora Inicio -->
@@ -81,9 +50,7 @@
                         <input type="time" name="hora_inicio" id="hora_inicio" required
                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                             value="{{ old('hora_inicio') }}">
-                        @error('hora_inicio')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+
                     </div>
 
                     <!-- Hora Fin -->
@@ -92,13 +59,10 @@
                         <input type="time" name="hora_fin" id="hora_fin" required
                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                             value="{{ old('hora_fin') }}">
-                        @error('hora_fin')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
                     </div>
                 </div>
 
-                <!-- Días (Multi-select) -->
+                <!-- Días -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-3">Días de la Semana</label>
                     <div class="space-y-2">
@@ -115,9 +79,6 @@
                             </label>
                         @endforeach
                     </div>
-                    @error('dias')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
                 </div>
 
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
@@ -126,7 +87,7 @@
             </form>
         </div>
 
-        <!-- Horarios List Section -->
+        <!-- Horarios List -->
         <div class="bg-white rounded-lg shadow overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200">
                 <h2 class="text-xl font-bold text-gray-900">Horarios Registrados</h2>
@@ -147,12 +108,10 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach ($horarios as $horario)
-                                <tr class="hover:bg-gray-50">
+                                <tr class>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $horario->id }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                                             {{ $horario->materia->nombre }}
-                                        </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $horario->maestro->nombre }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ substr($horario->hora_inicio, 0, 5) }}</td>
@@ -160,10 +119,8 @@
                                     <td class="px-6 py-4 text-sm text-gray-700">
                                         <div class="flex flex-wrap gap-1">
                                             @foreach (explode(',', $horario->dias) as $dia)
-                                                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
                                                     {{ trim($dia) }}
-                                                </span>
-                                            @endforeach
+                                          @endforeach
                                         </div>
                                     </td>
                                 </tr>

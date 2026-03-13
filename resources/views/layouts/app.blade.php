@@ -16,6 +16,9 @@
                     @auth
                         <a href="{{ route('admin.materias') }}" class="text-blue-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Materias</a>
                     @endauth
+                     @auth
+                        <a href="{{ route('admin.horarios') }}" class="text-blue-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Horarios</a>
+                    @endauth
                 </div>
                 
                 @auth
