@@ -179,7 +179,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'usuario_id' => 'required|exists:usuarios,id',
             'grupo_id' => 'required|exists:grupos,id',
-            'calificacion' => 'required|numeric|min:0|max:100',
+            'calificacion' => 'required|integer|min:0|max:100',
         ]);
 
         calificacion::create($validated);
@@ -202,7 +202,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'usuario_id' => 'required|exists:usuarios,id',
             'grupo_id' => 'required|exists:grupos,id',
-            'calificacion' => 'required|numeric|min:0|max:100',
+            'calificacion' => 'required|integer|min:0|max:100',
         ]);
 
         $calificacion->update($validated);
