@@ -7,6 +7,7 @@ use App\Models\usuario;
 use App\Models\inscripcion;
 use App\Models\horario;
 use App\Models\grupo;
+use App\Models\calificacion;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -16,7 +17,8 @@ class AdminController extends Controller
         $cantmaterias = Materia::count();
         $canthorarios = horario::count();
         $cantgrupos = grupo::count();
-        return view('admin.dashboard', compact('cantmaterias', 'canthorarios', 'cantgrupos'));
+        $cantcalificaciones = calificacion::count();
+        return view('admin.dashboard', compact('cantmaterias', 'canthorarios', 'cantgrupos', 'cantcalificaciones'));
     }
 
     public function indexMaterias()
@@ -161,5 +163,50 @@ class AdminController extends Controller
         $grupo->update($validated);
 
         return redirect()->route('admin.grupos')->with('success', 'Grupo actualizado exitosamente!');
+    }
+
+    public function indexCalificaciones()
+    {
+        $calificaciones = calificacion::with(['usuario', 'grupo.horario.materia', 'grupo.horario.maestro'])->get();
+        $usuarios = usuario::all();
+        $grupos = grupo::with(['horario.materia', 'horario.maestro'])->get();
+        
+        return view('admin.calificaciones', compact('calificaciones', 'usuarios', 'grupos'));
+    }
+
+    public function saveCalificacion(Request $request)
+    {
+        $validated = $request->validate([
+            'usuario_id' => 'required|exists:usuarios,id',
+            'grupo_id' => 'required|exists:grupos,id',
+            'calificacion' => 'required|numeric|min:0|max:100',
+        ]);
+
+        calificacion::create($validated);
+
+        return redirect()->route('admin.calificaciones')->with('success', 'Calificación creada exitosamente!');
+    }
+
+    public function editCalificacion($id)
+    {
+        $calificacion = calificacion::findOrFail($id);
+        $usuarios = usuario::all();
+        $grupos = grupo::with(['horario.materia', 'horario.maestro'])->get();
+        return view('admin.calificaciones-edit', compact('calificacion', 'usuarios', 'grupos'));
+    }
+
+    public function updateCalificacion(Request $request, $id)
+    {
+        $calificacion = calificacion::findOrFail($id);
+        
+        $validated = $request->validate([
+            'usuario_id' => 'required|exists:usuarios,id',
+            'grupo_id' => 'required|exists:grupos,id',
+            'calificacion' => 'required|numeric|min:0|max:100',
+        ]);
+
+        $calificacion->update($validated);
+
+        return redirect()->route('admin.calificaciones')->with('success', 'Calificación actualizada exitosamente!');
     }
 }
