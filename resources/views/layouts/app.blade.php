@@ -23,6 +23,9 @@
                         <a href="{{ route('admin.grupos') }}" class="text-blue-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Grupos</a>
                     @endauth
                     @auth
+                        <a href="{{ route('admin.inscripciones') }}" class="text-blue-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Inscripciones</a>
+                    @endauth
+                    @auth
                         <a href="{{ route('admin.calificaciones') }}" class="text-blue-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Calificaciones</a>
                     @endauth
                 </div>

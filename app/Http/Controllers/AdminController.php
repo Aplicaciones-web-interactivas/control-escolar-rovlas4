@@ -17,8 +17,9 @@ class AdminController extends Controller
         $cantmaterias = Materia::count();
         $canthorarios = horario::count();
         $cantgrupos = grupo::count();
+        $cantestudiantes = usuario::where('activo', true)->count();
         $cantcalificaciones = calificacion::count();
-        return view('admin.dashboard', compact('cantmaterias', 'canthorarios', 'cantgrupos', 'cantcalificaciones'));
+        return view('admin.dashboard', compact('cantmaterias', 'canthorarios', 'cantgrupos', 'cantestudiantes', 'cantcalificaciones'));
     }
 
     public function indexMaterias()
@@ -208,5 +209,89 @@ class AdminController extends Controller
         $calificacion->update($validated);
 
         return redirect()->route('admin.calificaciones')->with('success', 'Calificación actualizada exitosamente!');
+    }
+
+    public function indexInscripciones()
+    {
+        $inscripciones = inscripcion::with(['usuario', 'grupo.horario.materia'])->get();
+        $usuarios = usuario::where('activo', true)->get();
+        $grupos = grupo::with(['horario.materia', 'horario.maestro'])->get();
+        
+        return view('admin.inscripciones', compact('inscripciones', 'usuarios', 'grupos'));
+    }
+
+    public function saveInscripcion(Request $request)
+    {
+        $validated = $request->validate([
+            'usuario_id' => 'required|exists:usuarios,id',
+            'grupo_id' => 'required|exists:grupos,id',
+        ]);
+
+        $existe = inscripcion::where('usuario_id', $validated['usuario_id'])
+                              ->where('grupo_id', $validated['grupo_id'])
+                              ->exists();
+        
+        if ($existe) {
+            return redirect()->route('admin.inscripciones')->with('error', 'Este estudiante ya está inscrito en este grupo!');
+        }
+
+        inscripcion::create($validated);
+
+        return redirect()->route('admin.inscripciones')->with('success', 'Inscripción creada exitosamente!');
+    }
+
+    public function editInscripcion($id)
+    {
+        $inscripcion = inscripcion::findOrFail($id);
+        $usuarios = usuario::where('activo', true)->get();
+        $grupos = grupo::with(['horario.materia', 'horario.maestro'])->get();
+        return view('admin.inscripciones-edit', compact('inscripcion', 'usuarios', 'grupos'));
+    }
+
+    public function updateInscripcion(Request $request, $id)
+    {
+        $inscripcion = inscripcion::findOrFail($id);
+        
+        $validated = $request->validate([
+            'usuario_id' => 'required|exists:usuarios,id',
+            'grupo_id' => 'required|exists:grupos,id',
+        ]);
+
+        // Verificar que no exista inscripción duplicada (excepto la actual)
+        $existe = inscripcion::where('usuario_id', $validated['usuario_id'])
+                              ->where('grupo_id', $validated['grupo_id'])
+                              ->where('id', '!=', $id)
+                              ->exists();
+        
+        if ($existe) {
+            return redirect()->route('admin.inscripciones')->with('error', 'Este estudiante ya está inscrito en este grupo!');
+        }
+
+        $inscripcion->update($validated);
+
+        return redirect()->route('admin.inscripciones')->with('success', 'Inscripción actualizada exitosamente!');
+    }
+
+    public function deleteInscripcion($id)
+    {
+        $inscripcion = inscripcion::findOrFail($id);
+        $inscripcion->delete();
+
+        return redirect()->route('admin.inscripciones')->with('success', 'Inscripción eliminada exitosamente!');
+    }
+
+    public function getEstudiantesPorGrupo($grupoId)
+    {
+        $estudiantes = inscripcion::where('grupo_id', $grupoId)
+                                  ->with('usuario')
+                                  ->get()
+                                  ->map(function ($inscripcion) {
+                                      return [
+                                          'id' => $inscripcion->usuario->id,
+                                          'nombre' => $inscripcion->usuario->nombre
+                                      ];
+                                  });
+
+        return response()->json($estudiantes);
     }
 }

@@ -18,24 +18,25 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label for="usuario_id" class="block text-sm font-medium text-gray-700">Estudiante</label>
-                        <select name="usuario_id" id="usuario_id" required
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                            @foreach ($usuarios as $usuario)
-                                <option value="{{ $usuario->id }}" {{ old('usuario_id', $calificacion->usuario_id) == $usuario->id ? 'selected' : '' }}>
-                                    {{ $usuario->nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div>
                         <label for="grupo_id" class="block text-sm font-medium text-gray-700">Grupo</label>
                         <select name="grupo_id" id="grupo_id" required
                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                             @foreach ($grupos as $grupo)
                                 <option value="{{ $grupo->id }}" {{ old('grupo_id', $calificacion->grupo_id) == $grupo->id ? 'selected' : '' }}>
                                     {{ $grupo->nombre }} - {{ $grupo->horario->materia->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="usuario_id" class="block text-sm font-medium text-gray-700">Estudiante</label>
+                        <select name="usuario_id" id="usuario_id" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            <option value="">Seleccionar estudiante</option>
+                            @foreach ($usuarios as $usuario)
+                                <option value="{{ $usuario->id }}" {{ old('usuario_id', $calificacion->usuario_id) == $usuario->id ? 'selected' : '' }}>
+                                    {{ $usuario->nombre }}
                                 </option>
                             @endforeach
                         </select>
@@ -62,4 +63,38 @@
     </div>
 </div>
 
+<script>
+    document.getElementById('grupo_id').addEventListener('change', function() {
+        const grupoId = this.value;
+        const estudianteSelect = document.getElementById('usuario_id');
+        const currentUsuarioId = '{{ old("usuario_id", $calificacion->usuario_id) }}';
+
+        if (!grupoId) {
+            estudianteSelect.innerHTML = '<option value="">Seleccionar estudiante</option>';
+            return;
+        }
+
+        fetch(`/admin/inscripciones/grupo/${grupoId}`)
+            .then(response => response.json())
+            .then(data => {
+                estudianteSelect.innerHTML = '<option value="">Seleccionar estudiante</option>';
+                data.forEach(estudiante => {
+                    const option = document.createElement('option');
+                    option.value = estudiante.id;
+                    option.textContent = estudiante.nombre;
+                    if (estudiante.id == currentUsuarioId) {
+                        option.selected = true;
+                    }
+                    estudianteSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    window.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('grupo_id').dispatchEvent(new Event('change'));
+    });
+</script>
+
 @endsection
+
