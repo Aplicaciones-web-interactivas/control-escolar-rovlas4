@@ -27,6 +27,18 @@
                 <h2 class="text-xl font-bold text-gray-900 mb-4">Grupos Registrados</h2>
                 <p class="text-3xl font-bold text-yellow-600">{{ $cantgrupos }}</p>
             </div>
+
+            <!-- Cantidad de Estudiantes -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Estudiantes Registrados</h2>
+                <p class="text-3xl font-bold text-purple-600">{{ $cantestudiantes }}</p>
+            </div>
+
+            <!-- Cantidad de Calificaciones -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Calificaciones Registradas</h2>
+                <p class="text-3xl font-bold text-black-600">{{ $cantcalificaciones }}</p>
+            </div>
         </div>
     </div>
 </div>
