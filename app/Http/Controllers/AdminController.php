@@ -8,6 +8,7 @@ use App\Models\inscripcion;
 use App\Models\horario;
 use App\Models\grupo;
 use App\Models\calificacion;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -17,9 +18,10 @@ class AdminController extends Controller
         $cantmaterias = Materia::count();
         $canthorarios = horario::count();
         $cantgrupos = grupo::count();
-        $cantestudiantes = usuario::where('activo', true)->count();
+        $cantusuarios = usuario::where('activo', true)->count();
         $cantcalificaciones = calificacion::count();
-        return view('admin.dashboard', compact('cantmaterias', 'canthorarios', 'cantgrupos', 'cantestudiantes', 'cantcalificaciones'));
+        $sesionesActivas = DB::table('sessions')->whereNotNull('user_id')->count();
+        return view('admin.dashboard', compact('cantmaterias', 'canthorarios', 'cantgrupos', 'cantusuarios', 'cantcalificaciones', 'sesionesActivas'));
     }
 
     public function indexMaterias()

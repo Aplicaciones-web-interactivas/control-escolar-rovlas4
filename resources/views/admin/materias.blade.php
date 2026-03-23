@@ -1,75 +1,154 @@
 @extends('layouts.app')
 @section('content')
 
-<div class="min-h-screen bg-gray-50 pt-20">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="min-h-screen bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Gestionar Materias</h1>
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-2">
+                        <i class="icon ion-document-text text-indigo-600"></i>
+                        Gestionar Materias
+                    </h1>
+                    <p class="text-gray-500 mt-1">Crea, edita y administra todas las materias del sistema</p>
+                </div>
+            </div>
         </div>
 
-        <!-- Form -->
-        <div class="bg-white rounded-lg shadow p-6 mb-8">
-            <h2 class="text-xl font-bold text-gray-900 mb-6">Nueva Materia</h2>
+        <!-- Form Section -->
+        <div class="card mb-8">
+            <div class="card-header bg-gradient-to-r from-indigo-50 to-blue-50">
+                <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i class="icon ion-plus-circled"></i>
+                    Nueva Materia
+                </h2>
+            </div>
+            <div class="card-body">
+                <form action="{{ route('admin.materias.save') }}" method="POST" class="space-y-6">
+                    @csrf
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="form-group">
+                            <label for="nombre" class="form-label">
+                                <i class="icon ion-ios-book"></i>
+                                Nombre de la Materia <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="nombre" id="nombre" required
+                                class="form-input @error('nombre') border-red-500 @enderror" 
+                                value="{{ old('nombre') }}"
+                                placeholder="Ej: Matemáticas">
+                            @error('nombre')
+                                <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-            <form action="{{ route('admin.materias.save') }}" method="POST" class="space-y-6">
-                @csrf
-                <div>
-                    <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre de la Materia</label>
-                    <input type="text" name="nombre" id="nombre" required
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" value="{{ old('nombre') }}">
-                </div>
+                        <div class="form-group">
+                            <label for="clave" class="form-label">
+                                <i class="icon ion-qr-scanner"></i>
+                                Clave de la Materia <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="clave" id="clave" required
+                                class="form-input @error('clave') border-red-500 @enderror" 
+                                value="{{ old('clave') }}"
+                                placeholder="Ej: MAT101">
+                            @error('clave')
+                                <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
 
-                <div>
-                    <label for="clave" class="block text-sm font-medium text-gray-700">Clave de la Materia</label>
-                    <input type="text" name="clave" id="clave" required
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" value="{{ old('clave') }}">
-                </div>
-
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
-                    Crear Materia
-                </button>
-            </form>
+                    <div class="flex gap-3">
+                        <button type="submit" class="btn btn-primary flex-1">
+                            <i class="icon ion-checkmark-circled"></i>
+                            Crear Materia
+                        </button>
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary flex-1 justify-center">
+                            <i class="icon ion-close"></i>
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
 
-        <!-- Materias Lista -->
-        <div class="bg-white rounded-lg shadow overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-xl font-bold text-gray-900">Materias Registradas</h2>
+        <!-- List Section -->
+        <div class="card">
+            <div class="card-header flex items-center justify-between">
+                <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i class="icon ion-list"></i>
+                    Materias Registradas
+                </h2>
+                <div class="text-sm text-gray-500">
+                    Total: <span class="font-bold text-indigo-600">{{ $materias->count() }}</span>
+                </div>
             </div>
 
             @if ($materias->count() > 0)
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left font-medium">Clave</th>
-                                <th class="px-6 py-3 text-left font-medium">Nombre</th>
-                                <th class="px-6 py-3 text-left font-medium">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach ($materias as $materia)
+                <div class="card-body">
+                    <div class="mb-4">
+                        <input type="text" id="searchInput" 
+                            placeholder="🔍 Buscar por nombre o clave..." 
+                            class="form-input"
+                            onkeyup="filterTable()">
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="data-table" id="materiasTable">
+                            <thead>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                            {{ $materia->clave }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $materia->nombre }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
-                                        <a href="{{ route('admin.materias.edit', $materia->id) }}" class="text-blue-600 hover:text-blue-900">Editar</a>
-                                    </td>
+                                    <th style="width: 15%">Clave</th>
+                                    <th style="width: 50%">Nombre</th>
+                                    <th style="width: 35%">Acciones</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach ($materias as $materia)
+                                    <tr class="materia-row">
+                                        <td>
+                                            <span class="badge badge-primary">{{ strtoupper($materia->clave) }}</span>
+                                        </td>
+                                        <td class="font-medium">{{ $materia->nombre }}</td>
+                                        <td>
+                                            <div class="flex gap-2">
+                                                <a href="{{ route('admin.materias.edit', $materia->id) }}" class="btn btn-primary btn-sm">
+                                                    <i class="icon ion-edit"></i>
+                                                    Editar
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             @else
-                <div class="px-6 py-12 text-center">
-                    <h3 class="mt-2 text-sm font-medium text-gray-900">No hay materias</h3>
+                <div class="card-body">
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <h3 class="font-bold text-gray-900 mb-2">No hay materias registradas</h3>
+                        <p class="text-gray-500 mb-6">Comienza creando una nueva materia usando el formulario anterior</p>
+                        <a href="{{ route('admin.materias') }}" class="btn btn-primary">
+                            <i class="icon ion-plus"></i>
+                            Crear Primera Materia
+                        </a>
+                    </div>
                 </div>
             @endif
         </div>
     </div>
 </div>
+
+<script>
+function filterTable() {
+    const input = document.getElementById('searchInput').value.toLowerCase();
+    const rows = document.querySelectorAll('.materia-row');
+    
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(input) ? '' : 'none';
+    });
+}
+</script>
 
 @endsection
