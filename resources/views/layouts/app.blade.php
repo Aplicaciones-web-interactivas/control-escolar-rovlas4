@@ -4,12 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.0/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="{{ asset('css/theme.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/components.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/animations.css') }}" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>Control Escolar</title>
 </head>
 <body class="bg-gray-50">
@@ -54,11 +51,11 @@
         
         <div style="flex: 1;"></div>
         
-        <div style="padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 12px; color: #9ca3af;">
-            <div style="margin-bottom: 8px;">{{ Auth::user()->nombre ?? 'Usuario' }}</div>
-            <form method="POST" action="{{ route('logout') }}" class="inline w-full">
+        <div class="sidebar-footer">
+            <div class="sidebar-user-name">{{ Auth::user()->nombre ?? 'Usuario' }}</div>
+            <form method="POST" action="{{ route('logout') }}" class="w-full">
                 @csrf
-                <button type="submit" class="btn btn-secondary btn-sm w-full justify-center">
+                <button type="submit" class="btn btn-secondary btn-sm w-full justify-center sidebar-logout-btn">
                     <i class="icon ion-log-out"></i>
                     <span>Cerrar Sesión</span>
                 </button>
