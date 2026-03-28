@@ -12,4 +12,14 @@ class grupo extends Model
     {
         return $this->belongsTo(horario::class);
     }
+
+    public function tareas()
+    {
+        return $this->hasMany(tarea::class);
+    }
+
+    public function inscripciones()
+    {
+        return $this->hasMany(inscripcion::class);
+    }
 }

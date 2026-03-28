@@ -46,8 +46,14 @@ class AuthController extends Controller
 
         Auth::login($usuario);
 
-        // Redirigir al dashboard
-        return redirect()->route('admin.dashboard');
+        // Redirigir según el rol
+        if ($usuario->rol === 'maestro') {
+            return redirect()->route('tareas.maestro');
+        } elseif ($usuario->rol === 'alumno') {
+            return redirect()->route('tareas.alumno');
+        } else {
+            return redirect()->route('admin.dashboard');
+        }
     }
 
     /**
@@ -59,13 +65,14 @@ class AuthController extends Controller
             'nombre' => 'required|string|max:255',
             'clave_institucional' => 'required|string|unique:usuarios',
             'contraseña' => 'required|string|min:6|confirmed',
+            'rol' => 'required|in:maestro,alumno,usuario',
         ]);
 
         usuario::create([
             'nombre' => $validated['nombre'],
             'clave_institucional' => $validated['clave_institucional'],
             'contraseña' => Hash::make($validated['contraseña']),
-            'rol' => 'usuario',
+            'rol' => $validated['rol'],
             'activo' => true,
         ]);
 

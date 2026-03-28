@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\TareaController;
+use App\Http\Controllers\EntregaTareaController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -43,4 +45,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/calificaciones', [AdminController::class, 'saveCalificacion'])->name('admin.calificaciones.save');
     Route::get('/admin/calificaciones/{id}/edit', [AdminController::class, 'editCalificacion'])->name('admin.calificaciones.edit');
     Route::put('/admin/calificaciones/{id}', [AdminController::class, 'updateCalificacion'])->name('admin.calificaciones.update');
+    
+    // Rutas para tareas
+    Route::get('/tareas/maestro', [TareaController::class, 'indexMaestro'])->name('tareas.maestro');
+    Route::get('/tareas/crear', [TareaController::class, 'create'])->name('tareas.create');
+    Route::post('/tareas', [TareaController::class, 'store'])->name('tareas.store');
+    Route::get('/tareas/{id}/entregas', [TareaController::class, 'showEntregas'])->name('tareas.entregas');
+    
+    Route::get('/tareas/alumno', [TareaController::class, 'indexAlumno'])->name('tareas.alumno');
+    Route::get('/tareas/{id}', [TareaController::class, 'show'])->name('tareas.alumno.show');
+    Route::post('/tareas/{id}/entrega', [EntregaTareaController::class, 'store'])->name('entregas.store');
+    Route::get('/entregas/{id}/download', [EntregaTareaController::class, 'download'])->name('entregas.download');
 });

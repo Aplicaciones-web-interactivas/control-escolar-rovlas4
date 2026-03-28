@@ -136,6 +136,20 @@
                                 placeholder="Confirmar contraseña">
                         </div>
 
+                        <div>
+                            <label for="rol" class="block text-sm font-medium text-gray-700">Rol</label>
+                            <select id="rol" name="rol" required
+                                class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                <option value="">Selecciona un rol</option>
+                                <option value="maestro" {{ old('rol') === 'maestro' ? 'selected' : '' }}>Maestro</option>
+                                <option value="alumno" {{ old('rol') === 'alumno' ? 'selected' : '' }}>Alumno</option>
+                                <option value="usuario" {{ old('rol') === 'usuario' ? 'selected' : '' }}>Usuario</option>
+                            </select>
+                            @error('rol')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
                         <button type="submit"
                             class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                             Registrarse
