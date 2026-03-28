@@ -30,4 +30,19 @@ class usuario extends Authenticatable
     {
         return $this->contraseña;
     }
+
+    public function tareas()
+    {
+        return $this->hasMany(tarea::class);
+    }
+
+    public function entregas()
+    {
+        return $this->hasMany(entrega_tarea::class);
+    }
+
+    public function inscripciones()
+    {
+        return $this->hasMany(inscripcion::class);
+    }
 }

@@ -23,31 +23,73 @@
             <i class="icon ion-ios-home"></i>
             <span>Dashboard</span>
         </a>
-        
-        <a href="{{ route('admin.materias') }}" class="sidebar-item {{ request()->routeIs('admin.materias*') ? 'active' : '' }}">
-            <i class="icon ion-document-text"></i>
-            <span>Materias</span>
-        </a>
-        
-        <a href="{{ route('admin.horarios') }}" class="sidebar-item {{ request()->routeIs('admin.horarios*') ? 'active' : '' }}">
-            <i class="icon ion-clock"></i>
-            <span>Horarios</span>
-        </a>
-        
-        <a href="{{ route('admin.grupos') }}" class="sidebar-item {{ request()->routeIs('admin.grupos*') ? 'active' : '' }}">
-            <i class="icon ion-person-stalker"></i>
-            <span>Grupos</span>
-        </a>
-        
-        <a href="{{ route('admin.inscripciones') }}" class="sidebar-item {{ request()->routeIs('admin.inscripciones*') ? 'active' : '' }}">
-            <i class="icon ion-clipboard"></i>
-            <span>Inscripciones</span>
-        </a>
-        
-        <a href="{{ route('admin.calificaciones') }}" class="sidebar-item {{ request()->routeIs('admin.calificaciones*') ? 'active' : '' }}">
-            <i class="icon ion-star"></i>
-            <span>Calificaciones</span>
-        </a>
+
+        @if(Auth::user()->rol === 'maestro')
+            <!-- Opciones para Maestros -->
+            <a href="{{ route('tareas.maestro') }}" class="sidebar-item {{ request()->routeIs('tareas.maestro*') ? 'active' : '' }}">
+                <i class="icon ion-clipboard"></i>
+                <span>Mis Tareas</span>
+            </a>
+            
+            <a href="{{ route('admin.materias') }}" class="sidebar-item {{ request()->routeIs('admin.materias*') ? 'active' : '' }}">
+                <i class="icon ion-document-text"></i>
+                <span>Materias</span>
+            </a>
+            
+            <a href="{{ route('admin.horarios') }}" class="sidebar-item {{ request()->routeIs('admin.horarios*') ? 'active' : '' }}">
+                <i class="icon ion-clock"></i>
+                <span>Horarios</span>
+            </a>
+            
+            <a href="{{ route('admin.grupos') }}" class="sidebar-item {{ request()->routeIs('admin.grupos*') ? 'active' : '' }}">
+                <i class="icon ion-person-stalker"></i>
+                <span>Grupos</span>
+            </a>
+            
+            <a href="{{ route('admin.inscripciones') }}" class="sidebar-item {{ request()->routeIs('admin.inscripciones*') ? 'active' : '' }}">
+                <i class="icon ion-clipboard"></i>
+                <span>Inscripciones</span>
+            </a>
+            
+            <a href="{{ route('admin.calificaciones') }}" class="sidebar-item {{ request()->routeIs('admin.calificaciones*') ? 'active' : '' }}">
+                <i class="icon ion-star"></i>
+                <span>Calificaciones</span>
+            </a>
+
+        @elseif(Auth::user()->rol === 'alumno')
+            <!-- Opciones para Alumnos -->
+            <a href="{{ route('tareas.alumno') }}" class="sidebar-item {{ request()->routeIs('tareas.alumno*') ? 'active' : '' }}">
+                <i class="icon ion-clipboard"></i>
+                <span>Mis Tareas</span>
+            </a>
+
+        @else
+            <!-- Opciones para Usuarios -->
+            <a href="{{ route('admin.materias') }}" class="sidebar-item {{ request()->routeIs('admin.materias*') ? 'active' : '' }}">
+                <i class="icon ion-document-text"></i>
+                <span>Materias</span>
+            </a>
+            
+            <a href="{{ route('admin.horarios') }}" class="sidebar-item {{ request()->routeIs('admin.horarios*') ? 'active' : '' }}">
+                <i class="icon ion-clock"></i>
+                <span>Horarios</span>
+            </a>
+            
+            <a href="{{ route('admin.grupos') }}" class="sidebar-item {{ request()->routeIs('admin.grupos*') ? 'active' : '' }}">
+                <i class="icon ion-person-stalker"></i>
+                <span>Grupos</span>
+            </a>
+            
+            <a href="{{ route('admin.inscripciones') }}" class="sidebar-item {{ request()->routeIs('admin.inscripciones*') ? 'active' : '' }}">
+                <i class="icon ion-clipboard"></i>
+                <span>Inscripciones</span>
+            </a>
+            
+            <a href="{{ route('admin.calificaciones') }}" class="sidebar-item {{ request()->routeIs('admin.calificaciones*') ? 'active' : '' }}">
+                <i class="icon ion-star"></i>
+                <span>Calificaciones</span>
+            </a>
+        @endif
         
         <div style="flex: 1;"></div>
         
