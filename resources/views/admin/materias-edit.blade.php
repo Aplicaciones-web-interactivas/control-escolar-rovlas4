@@ -1,42 +1,108 @@
 @extends('layouts.app')
 @section('content')
 
-<div class="min-h-screen bg-gray-50 pt-20">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="min-h-screen bg-gray-50">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Editar Materia</h1>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('admin.materias') }}" class="text-indigo-600 hover:text-indigo-700">
+                    <i class="icon ion-chevron-left text-2xl"></i>
+                </a>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Editar Materia</h1>
+                    <p class="text-gray-500 mt-1">Modifica la información de la materia</p>
+                </div>
+            </div>
         </div>
 
-        <!-- Form -->
-        <div class="bg-white rounded-lg shadow p-6 mb-8">
-            <h2 class="text-xl font-bold text-gray-900 mb-6">Actualizar Materia</h2>
+        <!-- Form Card -->
+        <div class="card">
+            <div class="card-header bg-gradient-to-r from-indigo-50 to-blue-50">
+                <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i class="icon ion-edit"></i>
+                    Actualizar Información
+                </h2>
+            </div>
 
-            <form action="{{ route('admin.materias.update', $materia->id) }}" method="POST" class="space-y-6">
-                @csrf
-                @method('PUT')
-                
-                <div>
-                    <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre de la Materia</label>
-                    <input type="text" name="nombre" id="nombre" required
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" value="{{ old('nombre', $materia->nombre) }}">
-                </div>
+            <div class="card-body">
+                <form action="{{ route('admin.materias.update', $materia->id) }}" method="POST" class="space-y-6">
+                    @csrf
+                    @method('PUT')
+                    
+                    <div class="form-group">
+                        <label for="nombre" class="form-label">
+                            <i class="icon ion-ios-book"></i>
+                            Nombre de la Materia <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="nombre" id="nombre" required
+                            class="form-input @error('nombre') border-red-500 @enderror"
+                            value="{{ old('nombre', $materia->nombre) }}"
+                            placeholder="Ej: Matemáticas Avanzadas">
+                        @error('nombre')
+                            <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-                <div>
-                    <label for="clave" class="block text-sm font-medium text-gray-700">Clave de la Materia</label>
-                    <input type="text" name="clave" id="clave" required
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" value="{{ old('clave', $materia->clave) }}">
-                </div>
+                    <div class="form-group">
+                        <label for="clave" class="form-label">
+                            <i class="icon ion-qr-scanner"></i>
+                            Clave de la Materia <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="clave" id="clave" required
+                            class="form-input @error('clave') border-red-500 @enderror"
+                            value="{{ old('clave', $materia->clave) }}"
+                            placeholder="Ej: MAT101">
+                        @error('clave')
+                            <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-                <div class="flex space-x-4">
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
-                        Actualizar Materia
-                    </button>
-                    <a href="{{ route('admin.materias') }}" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-900 font-medium py-2 px-4 rounded-md transition-colors text-center">
-                        Cancelar
-                    </a>
+                    <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <div class="text-sm text-blue-800">
+                            <i class="icon ion-information"></i>
+                            <strong>Información:</strong> Los cambios realizados se reflejarán inmediatamente en todo el sistema.
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button type="submit" class="btn btn-primary flex-1">
+                            <i class="icon ion-checkmark-circled"></i>
+                            Guardar Cambios
+                        </button>
+                        <a href="{{ route('admin.materias') }}" class="btn btn-secondary flex-1 justify-center">
+                            <i class="icon ion-close"></i>
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Info Card -->
+        <div class="card mt-8">
+            <div class="card-header">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i class="icon ion-information-circled"></i>
+                    Detalles Actuales
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="space-y-3">
+                    <div class="flex justify-between py-2 border-b border-gray-200">
+                        <span class="text-gray-600">ID de Materia:</span>
+                        <span class="font-medium text-gray-900">#{{ $materia->id }}</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-gray-200">
+                        <span class="text-gray-600">Nombre Actual:</span>
+                        <span class="font-medium text-gray-900">{{ $materia->nombre }}</span>
+                    </div>
+                    <div class="flex justify-between py-2">
+                        <span class="text-gray-600">Clave Actual:</span>
+                        <span class="font-medium text-gray-900">{{ strtoupper($materia->clave) }}</span>
+                    </div>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>

@@ -1,85 +1,153 @@
 @extends('layouts.app')
 @section('content')
 
-<div class="min-h-screen bg-gray-50 pt-20">
+<div class="min-h-screen bg-gray-50">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Gestionar Grupos</h1>
-        </div>
-
-        <!-- Form -->
-        <div class="bg-white rounded-lg shadow p-6 mb-8">
-            <h2 class="text-xl font-bold text-gray-900 mb-6">Nuevo Grupo</h2>
-
-            <form action="{{ route('admin.grupos.save') }}" method="POST" class="space-y-6">
-                @csrf
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Nombre Grupo -->
-                    <div>
-                        <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre del Grupo</label>
-                        <input type="text" name="nombre" id="nombre" required
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" value="{{ old('nombre') }}">
-                    </div>
-
-                    <!-- Horario -->
-                    <div>
-                        <label for="horario_id" class="block text-sm font-medium text-gray-700">Horario</label>
-                        <select name="horario_id" id="horario_id" required
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                            <option value="">-- Selecciona un horario --</option>
-                            @foreach ($horarios as $horario)
-                                <option value="{{ $horario->id }}" {{ old('horario_id') == $horario->id ? 'selected' : '' }}>
-                                    {{ $horario->materia->nombre }} - {{ $horario->maestro->nombre }} ({{ substr($horario->hora_inicio, 0, 5) }} - {{ substr($horario->hora_fin, 0, 5) }})
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-2">
+                        <i class="icon ion-person-stalker text-indigo-600"></i>
+                        Gestionar Grupos
+                    </h1>
+                    <p class="text-gray-500 mt-1">Organiza y administra los grupos de clases</p>
                 </div>
-
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
-                    Crear Grupo
-                </button>
-            </form>
+            </div>
         </div>
 
-        <!-- Grupos List -->
-        <div class="bg-white rounded-lg shadow overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-xl font-bold text-gray-900">Grupos Registrados</h2>
+        <!-- Form Section -->
+        <div class="card mb-8 hover-lift">
+            <div class="card-header bg-gradient-to-r from-indigo-50 to-blue-50">
+                <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i class="icon ion-plus-circled"></i>
+                    Nuevo Grupo
+                </h2>
+            </div>
+            
+            <div class="card-body">
+                <form action="{{ route('admin.grupos.save') }}" method="POST" class="space-y-6">
+                    @csrf
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Nombre Grupo -->
+                        <div class="form-group">
+                            <label for="nombre" class="form-label">
+                                Nombre del Grupo <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="nombre" id="nombre" required
+                                class="form-input focus-ring @error('nombre') border-red-500 @enderror"
+                                value="{{ old('nombre') }}"
+                                placeholder="Ej: Grupo A1">
+                            @error('nombre')
+                                <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Horario -->
+                        <div class="form-group">
+                            <label for="horario_id" class="form-label">
+                                Horario <span class="text-red-500">*</span>
+                            </label>
+                            <select name="horario_id" id="horario_id" required
+                                class="form-select focus-ring @error('horario_id') border-red-500 @enderror">
+                                <option value="">-- Selecciona un horario --</option>
+                                @foreach ($horarios as $horario)
+                                    <option value="{{ $horario->id }}" {{ old('horario_id') == $horario->id ? 'selected' : '' }}>
+                                        {{ $horario->materia->nombre }} - {{ substr($horario->hora_inicio, 0, 5) }} a {{ substr($horario->hora_fin, 0, 5) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('horario_id')
+                                <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button type="submit" class="btn btn-primary flex-1 transition-colors">
+                            <i class="icon ion-checkmark-circled"></i>
+                            Crear Grupo
+                        </button>
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary flex-1 justify-center transition-colors">
+                            <i class="icon ion-close"></i>
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- List Section -->
+        <div class="card">
+            <div class="card-header flex items-center justify-between">
+                <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i class="icon ion-list"></i>
+                    Grupos Registrados
+                </h2>
+                <div class="text-sm text-gray-500">
+                    Total: <span class="font-bold text-indigo-600">{{ $grupos->total() }}</span>
+                </div>
             </div>
 
             @if ($grupos->count() > 0)
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Materia</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Maestro</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Horario</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach ($grupos as $grupo)
+                <div class="card-body">
+                    @include('components.search-bar', ['search' => $search, 'placeholder' => 'Buscar grupo o materia...'])
+                    
+                    <div class="overflow-x-auto">
+                        <table class="data-table">
+                            <thead>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $grupo->nombre }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $grupo->horario->materia->nombre }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $grupo->horario->maestro->nombre }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ substr($grupo->horario->hora_inicio, 0, 5) }} - {{ substr($grupo->horario->hora_fin, 0, 5) }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
-                                        <a href="{{ route('admin.grupos.edit', $grupo->id) }}" class="text-blue-600 hover:text-blue-900">Editar</a>
-                                    </td>
+                                    <th>Nombre</th>
+                                    <th>Materia</th>
+                                    <th>Maestro</th>
+                                    <th>Horario</th>
+                                    <th style="width: 20%">Acciones</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach ($grupos as $grupo)
+                                    <tr class="transition-smooth hover:bg-indigo-50">
+                                        <td>
+                                            <span class="badge badge-primary">{{ $grupo->nombre }}</span>
+                                        </td>
+                                        <td class="font-medium">{{ $grupo->horario->materia->nombre }}</td>
+                                        <td>
+                                            <span class="text-sm text-gray-700">
+                                                {{ $grupo->horario->maestro->nombre ?? 'N/A' }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="text-sm text-gray-700">
+                                                {{ substr($grupo->horario->hora_inicio, 0, 5) }} - {{ substr($grupo->horario->hora_fin, 0, 5) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="flex gap-2">
+                                                <a href="{{ route('admin.grupos.edit', $grupo->id) }}" class="btn btn-primary btn-sm hover-lift">
+                                                    <i class="icon ion-edit"></i>
+                                                    Editar
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="mt-6">
+                        {{ $grupos->links('components.pagination') }}
+                    </div>
                 </div>
             @else
-                <div class="px-6 py-12 text-center">
-                    <h3 class="mt-2 text-sm text-gray-900">No hay grupos</h3>
+                <div class="card-body">
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <h3 class="font-bold text-gray-900 mb-2">No hay grupos registrados</h3>
+                        <p class="text-gray-500 mb-6">Crea tu primer grupo usando el formulario anterior</p>
+                    </div>
                 </div>
             @endif
         </div>

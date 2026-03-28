@@ -8,6 +8,7 @@ use App\Models\inscripcion;
 use App\Models\horario;
 use App\Models\grupo;
 use App\Models\calificacion;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -17,15 +18,26 @@ class AdminController extends Controller
         $cantmaterias = Materia::count();
         $canthorarios = horario::count();
         $cantgrupos = grupo::count();
-        $cantestudiantes = usuario::where('activo', true)->count();
+        $cantusuarios = usuario::where('activo', true)->count();
         $cantcalificaciones = calificacion::count();
-        return view('admin.dashboard', compact('cantmaterias', 'canthorarios', 'cantgrupos', 'cantestudiantes', 'cantcalificaciones'));
+        $sesionesActivas = DB::table('sessions')->whereNotNull('user_id')->count();
+        return view('admin.dashboard', compact('cantmaterias', 'canthorarios', 'cantgrupos', 'cantusuarios', 'cantcalificaciones', 'sesionesActivas'));
     }
 
-    public function indexMaterias()
+    public function indexMaterias(Request $request)
     {
-        $materias = Materia::all();
-        return view('admin.materias', compact('materias'));
+        $search = $request->query('search', '');
+        
+        $query = Materia::query();
+        
+        if ($search) {
+            $query->where('nombre', 'like', "%{$search}%")
+                  ->orWhere('clave', 'like', "%{$search}%");
+        }
+        
+        $materias = $query->paginate(10)->appends($request->query());
+        
+        return view('admin.materias', compact('materias', 'search'));
     }
 
     public function saveMateria(Request $request)
@@ -60,13 +72,25 @@ class AdminController extends Controller
         return redirect()->route('admin.materias')->with('success', 'Materia actualizada exitosamente!');
     }
 
-    public function indexHorarios()
+    public function indexHorarios(Request $request)
     {
-        $horarios = horario::with(['materia', 'maestro'])->get();
+        $search = $request->query('search', '');
+        
+        $query = horario::with(['materia', 'maestro']);
+        
+        if ($search) {
+            $query->whereHas('materia', function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%");
+            })->orWhereHas('maestro', function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%");
+            });
+        }
+        
+        $horarios = $query->paginate(10)->appends($request->query());
         $materias = Materia::all();
         $maestros = usuario::where('activo', true)->get();
         
-        return view('admin.horarios', compact('horarios', 'materias', 'maestros'));
+        return view('admin.horarios', compact('horarios', 'materias', 'maestros', 'search'));
     }
 
     public function saveHorario(Request $request)
@@ -125,12 +149,23 @@ class AdminController extends Controller
         return redirect()->route('admin.horarios')->with('success', 'Horario actualizado exitosamente!');
     }
 
-    public function indexGrupos()
+    public function indexGrupos(Request $request)
     {
-        $grupos = grupo::with(['horario.materia', 'horario.maestro'])->get();
+        $search = $request->query('search', '');
+        
+        $query = grupo::with(['horario.materia', 'horario.maestro']);
+        
+        if ($search) {
+            $query->where('nombre', 'like', "%{$search}%")
+                  ->orWhereHas('horario.materia', function ($q) use ($search) {
+                      $q->where('nombre', 'like', "%{$search}%");
+                  });
+        }
+        
+        $grupos = $query->paginate(10)->appends($request->query());
         $horarios = horario::with(['materia', 'maestro'])->get();
         
-        return view('admin.grupos', compact('grupos', 'horarios'));
+        return view('admin.grupos', compact('grupos', 'horarios', 'search'));
     }
 
     public function saveGrupo(Request $request)
@@ -166,13 +201,27 @@ class AdminController extends Controller
         return redirect()->route('admin.grupos')->with('success', 'Grupo actualizado exitosamente!');
     }
 
-    public function indexCalificaciones()
+    public function indexCalificaciones(Request $request)
     {
-        $calificaciones = calificacion::with(['usuario', 'grupo.horario.materia', 'grupo.horario.maestro'])->get();
+        $search = $request->query('search', '');
+        
+        $query = calificacion::with(['usuario', 'grupo.horario.materia', 'grupo.horario.maestro']);
+        
+        if ($search) {
+            $query->whereHas('usuario', function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%");
+            })->orWhereHas('grupo', function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%");
+            })->orWhereHas('grupo.horario.materia', function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%");
+            });
+        }
+        
+        $calificaciones = $query->paginate(10)->appends($request->query());
         $usuarios = usuario::all();
         $grupos = grupo::with(['horario.materia', 'horario.maestro'])->get();
         
-        return view('admin.calificaciones', compact('calificaciones', 'usuarios', 'grupos'));
+        return view('admin.calificaciones', compact('calificaciones', 'usuarios', 'grupos', 'search'));
     }
 
     public function saveCalificacion(Request $request)
@@ -211,13 +260,27 @@ class AdminController extends Controller
         return redirect()->route('admin.calificaciones')->with('success', 'Calificación actualizada exitosamente!');
     }
 
-    public function indexInscripciones()
+    public function indexInscripciones(Request $request)
     {
-        $inscripciones = inscripcion::with(['usuario', 'grupo.horario.materia'])->get();
+        $search = $request->query('search', '');
+        
+        $query = inscripcion::with(['usuario', 'grupo.horario.materia']);
+        
+        if ($search) {
+            $query->whereHas('usuario', function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%");
+            })->orWhereHas('grupo', function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%");
+            })->orWhereHas('grupo.horario.materia', function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%");
+            });
+        }
+        
+        $inscripciones = $query->paginate(10)->appends($request->query());
         $usuarios = usuario::where('activo', true)->get();
         $grupos = grupo::with(['horario.materia', 'horario.maestro'])->get();
         
-        return view('admin.inscripciones', compact('inscripciones', 'usuarios', 'grupos'));
+        return view('admin.inscripciones', compact('inscripciones', 'usuarios', 'grupos', 'search'));
     }
 
     public function saveInscripcion(Request $request)
