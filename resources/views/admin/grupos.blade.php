@@ -17,7 +17,7 @@
         </div>
 
         <!-- Form Section -->
-        <div class="card mb-8">
+        <div class="card mb-8 hover-lift">
             <div class="card-header bg-gradient-to-r from-indigo-50 to-blue-50">
                 <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
                     <i class="icon ion-plus-circled"></i>
@@ -33,11 +33,10 @@
                         <!-- Nombre Grupo -->
                         <div class="form-group">
                             <label for="nombre" class="form-label">
-                                <i class="icon ion-android-people"></i>
                                 Nombre del Grupo <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="nombre" id="nombre" required
-                                class="form-input @error('nombre') border-red-500 @enderror"
+                                class="form-input focus-ring @error('nombre') border-red-500 @enderror"
                                 value="{{ old('nombre') }}"
                                 placeholder="Ej: Grupo A1">
                             @error('nombre')
@@ -48,11 +47,10 @@
                         <!-- Horario -->
                         <div class="form-group">
                             <label for="horario_id" class="form-label">
-                                <i class="icon ion-clock"></i>
                                 Horario <span class="text-red-500">*</span>
                             </label>
                             <select name="horario_id" id="horario_id" required
-                                class="form-select @error('horario_id') border-red-500 @enderror">
+                                class="form-select focus-ring @error('horario_id') border-red-500 @enderror">
                                 <option value="">-- Selecciona un horario --</option>
                                 @foreach ($horarios as $horario)
                                     <option value="{{ $horario->id }}" {{ old('horario_id') == $horario->id ? 'selected' : '' }}>
@@ -67,11 +65,11 @@
                     </div>
 
                     <div class="flex gap-3">
-                        <button type="submit" class="btn btn-primary flex-1">
+                        <button type="submit" class="btn btn-primary flex-1 transition-colors">
                             <i class="icon ion-checkmark-circled"></i>
                             Crear Grupo
                         </button>
-                        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary flex-1 justify-center">
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary flex-1 justify-center transition-colors">
                             <i class="icon ion-close"></i>
                             Cancelar
                         </a>
@@ -88,12 +86,14 @@
                     Grupos Registrados
                 </h2>
                 <div class="text-sm text-gray-500">
-                    Total: <span class="font-bold text-indigo-600">{{ $grupos->count() }}</span>
+                    Total: <span class="font-bold text-indigo-600">{{ $grupos->total() }}</span>
                 </div>
             </div>
 
             @if ($grupos->count() > 0)
                 <div class="card-body">
+                    @include('components.search-bar', ['search' => $search, 'placeholder' => 'Buscar grupo o materia...'])
+                    
                     <div class="overflow-x-auto">
                         <table class="data-table">
                             <thead>
@@ -107,7 +107,7 @@
                             </thead>
                             <tbody>
                                 @foreach ($grupos as $grupo)
-                                    <tr>
+                                    <tr class="transition-smooth hover:bg-indigo-50">
                                         <td>
                                             <span class="badge badge-primary">{{ $grupo->nombre }}</span>
                                         </td>
@@ -124,7 +124,7 @@
                                         </td>
                                         <td>
                                             <div class="flex gap-2">
-                                                <a href="{{ route('admin.grupos.edit', $grupo->id) }}" class="btn btn-primary btn-sm">
+                                                <a href="{{ route('admin.grupos.edit', $grupo->id) }}" class="btn btn-primary btn-sm hover-lift">
                                                     <i class="icon ion-edit"></i>
                                                     Editar
                                                 </a>
@@ -134,6 +134,11 @@
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="mt-6">
+                        {{ $grupos->links('components.pagination') }}
                     </div>
                 </div>
             @else

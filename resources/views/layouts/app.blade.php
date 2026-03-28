@@ -106,5 +106,8 @@
             }
         });
     </script>
+
+    <!-- Toast Notifications Component -->
+    @include('components.toast')
 </body>
 </html>

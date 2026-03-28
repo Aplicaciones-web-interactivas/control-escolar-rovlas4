@@ -17,92 +17,144 @@
         </div>
 
         <!-- Form -->
-        <div class="bg-white rounded-lg shadow p-6 mb-8">
-            <h2 class="text-xl font-bold text-gray-900 mb-6">Nueva Calificación</h2>
+        <div class="card mb-8 hover-lift">
+            <div class="card-header bg-gradient-to-r from-indigo-50 to-blue-50">
+                <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i class="icon ion-plus-circled"></i>
+                    Nueva Calificación
+                </h2>
+            </div>
 
-            <form action="{{ route('admin.calificaciones.save') }}" method="POST" class="space-y-6">
-                @csrf
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                        <label for="grupo_id" class="block text-sm font-medium text-gray-700">Grupo</label>
-                        <select name="grupo_id" id="grupo_id" required
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                            <option value="">Seleccionar grupo</option>
-                            @foreach ($grupos as $grupo)
-                                <option value="{{ $grupo->id }}">{{ $grupo->nombre }} - {{ $grupo->horario->materia->nombre }}</option>
-                            @endforeach
-                        </select>
+            <div class="card-body">
+                <form action="{{ route('admin.calificaciones.save') }}" method="POST" class="space-y-6">
+                    @csrf
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="form-group">
+                            <label for="grupo_id" class="form-label">
+                                Grupo <span class="text-red-500">*</span>
+                            </label>
+                            <select name="grupo_id" id="grupo_id" required
+                                class="form-select focus-ring @error('grupo_id') border-red-500 @enderror">
+                                <option value="">Seleccionar grupo</option>
+                                @foreach ($grupos as $grupo)
+                                    <option value="{{ $grupo->id }}" {{ old('grupo_id') == $grupo->id ? 'selected' : '' }}>
+                                        {{ $grupo->nombre }} - {{ $grupo->horario->materia->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('grupo_id')
+                                <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="usuario_id" class="form-label">
+                                Estudiante <span class="text-red-500">*</span>
+                            </label>
+                            <select name="usuario_id" id="usuario_id" required
+                                class="form-select focus-ring @error('usuario_id') border-red-500 @enderror">
+                                <option value="">Seleccionar estudiante</option>
+                            </select>
+                            @error('usuario_id')
+                                <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="calificacion" class="form-label">
+                                Calificación (0-100) <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" name="calificacion" id="calificacion" required min="0" max="100" step="1"
+                                class="form-input focus-ring @error('calificacion') border-red-500 @enderror" 
+                                value="{{ old('calificacion') }}"
+                                placeholder="Ej: 95">
+                            @error('calificacion')
+                                <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            @enderror
+                        </div>
                     </div>
 
-                    <div>
-                        <label for="usuario_id" class="block text-sm font-medium text-gray-700">Estudiante</label>
-                        <select name="usuario_id" id="usuario_id" required
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                            <option value="">Seleccionar grupo primero</option>
-                        </select>
+                    <div class="flex gap-3">
+                        <button type="submit" class="btn btn-primary flex-1 transition-colors">
+                            <i class="icon ion-checkmark-circled"></i>
+                            Crear Calificación
+                        </button>
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary flex-1 justify-center transition-colors">
+                            <i class="icon ion-close"></i>
+                            Cancelar
+                        </a>
                     </div>
-
-                    <div>
-                        <label for="calificacion" class="block text-sm font-medium text-gray-700">Calificación (0-100)</label>
-                        <input type="number" name="calificacion" id="calificacion" required min="0" max="100" step="1"
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" value="{{ old('calificacion') }}">
-                    </div>
-                </div>
-
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
-                    Crear Calificación
-                </button>
-            </form>
+                </form>
+            </div>
         </div>
 
         <!-- Calificaciones Lista -->
-        <div class="bg-white rounded-lg shadow overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-xl font-bold text-gray-900">Calificaciones Registradas</h2>
+        <div class="card">
+            <div class="card-header flex items-center justify-between">
+                <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i class="icon ion-list"></i>
+                    Calificaciones Registradas
+                </h2>
+                <div class="text-sm text-gray-500">
+                    Total: <span class="font-bold text-indigo-600">{{ $calificaciones->total() }}</span>
+                </div>
             </div>
 
             @if ($calificaciones->count() > 0)
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left font-medium">Estudiante</th>
-                                <th class="px-6 py-3 text-left font-medium">Grupo</th>
-                                <th class="px-6 py-3 text-left font-medium">Materia</th>
-                                <th class="px-6 py-3 text-left font-medium">Maestro</th>
-                                <th class="px-6 py-3 text-left font-medium">Calificación</th>
-                                <th class="px-6 py-3 text-left font-medium">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach ($calificaciones as $calif)
+                <div class="card-body">
+                    @include('components.search-bar', ['search' => $search, 'placeholder' => 'Buscar estudiante, grupo o materia...'])
+                    
+                    <div class="overflow-x-auto">
+                        <table class="data-table">
+                            <thead>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                        {{ $calif->usuario->nombre }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                        {{ $calif->grupo->nombre }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                        {{ $calif->grupo->horario->materia->nombre }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                        {{ $calif->grupo->horario->maestro->nombre }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold">
-                                            {{ number_format($calif->calificacion) }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
-                                        <a href="{{ route('admin.calificaciones.edit', $calif->id) }}" class="text-blue-600 hover:text-blue-900">Editar</a>
-                                    </td>
+                                    <th>Estudiante</th>
+                                    <th>Grupo</th>
+                                    <th>Materia</th>
+                                    <th>Maestro</th>
+                                    <th style="width: 12%">Calificación</th>
+                                    <th style="width: 15%">Acciones</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach ($calificaciones as $calif)
+                                    <tr class="transition-smooth hover:bg-indigo-50">
+                                        <td class="font-medium">{{ $calif->usuario->nombre }}</td>
+                                        <td>
+                                            <span class="badge badge-primary">{{ $calif->grupo->nombre }}</span>
+                                        </td>
+                                        <td>{{ $calif->grupo->horario->materia->nombre }}</td>
+                                        <td>{{ $calif->grupo->horario->maestro->nombre }}</td>
+                                        <td class="text-center">
+                                            <span class="inline-block px-3 py-1 rounded-full text-white font-bold text-sm"
+                                                style="background-color: {{ $calif->calificacion >= 80 ? '#10b981' : ($calif->calificacion >= 60 ? '#f59e0b' : '#ef4444') }}">
+                                                {{ number_format($calif->calificacion) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('admin.calificaciones.edit', $calif->id) }}" class="btn btn-primary btn-sm hover-lift">
+                                                <i class="icon ion-edit"></i>
+                                                Editar
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="mt-6">
+                        {{ $calificaciones->links('components.pagination') }}
+                    </div>
                 </div>
             @else
-                <div class="px-6 py-12 text-center">
-                    <h3 class="mt-2 text-sm font-medium text-gray-900">No hay calificaciones</h3>
+                <div class="card-body">
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <h3 class="font-bold text-gray-900 mb-2">No hay calificaciones registradas</h3>
+                        <p class="text-gray-500 mb-6">Comienza registrando una calificación usando el formulario anterior</p>
+                    </div>
                 </div>
             @endif
         </div>
@@ -110,6 +162,7 @@
 </div>
 
 <script>
+    // Cargar estudiantes del grupo seleccionado
     document.getElementById('grupo_id').addEventListener('change', function() {
         const grupoId = this.value;
         const estudianteSelect = document.getElementById('usuario_id');
@@ -118,6 +171,10 @@
             estudianteSelect.innerHTML = '<option value="">Seleccionar grupo primero</option>';
             return;
         }
+
+        // Mostrar loading
+        estudianteSelect.innerHTML = '<option value="">Cargando...</option>';
+        estudianteSelect.disabled = true;
 
         fetch(`/admin/inscripciones/grupo/${grupoId}`)
             .then(response => response.json())
@@ -129,15 +186,14 @@
                     option.textContent = estudiante.nombre;
                     estudianteSelect.appendChild(option);
                 });
+                estudianteSelect.disabled = false;
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                estudianteSelect.innerHTML = '<option value="">Error al cargar</option>';
+                Toast?.error('Error al cargar estudiantes');
+            });
     });
 </script>
-
-
-                </div>
-        </div>
-    </div>
-</div>
 
 @endsection

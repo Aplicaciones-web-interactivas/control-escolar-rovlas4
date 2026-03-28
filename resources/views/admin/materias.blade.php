@@ -17,7 +17,7 @@
         </div>
 
         <!-- Form Section -->
-        <div class="card mb-8">
+        <div class="card mb-8 hover-lift">
             <div class="card-header bg-gradient-to-r from-indigo-50 to-blue-50">
                 <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
                     <i class="icon ion-plus-circled"></i>
@@ -30,11 +30,10 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="form-group">
                             <label for="nombre" class="form-label">
-                                <i class="icon ion-ios-book"></i>
                                 Nombre de la Materia <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="nombre" id="nombre" required
-                                class="form-input @error('nombre') border-red-500 @enderror" 
+                                class="form-input focus-ring @error('nombre') border-red-500 @enderror" 
                                 value="{{ old('nombre') }}"
                                 placeholder="Ej: Matemáticas">
                             @error('nombre')
@@ -44,11 +43,10 @@
 
                         <div class="form-group">
                             <label for="clave" class="form-label">
-                                <i class="icon ion-qr-scanner"></i>
                                 Clave de la Materia <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="clave" id="clave" required
-                                class="form-input @error('clave') border-red-500 @enderror" 
+                                class="form-input focus-ring @error('clave') border-red-500 @enderror" 
                                 value="{{ old('clave') }}"
                                 placeholder="Ej: MAT101">
                             @error('clave')
@@ -58,11 +56,11 @@
                     </div>
 
                     <div class="flex gap-3">
-                        <button type="submit" class="btn btn-primary flex-1">
+                        <button type="submit" class="btn btn-primary flex-1 transition-colors">
                             <i class="icon ion-checkmark-circled"></i>
                             Crear Materia
                         </button>
-                        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary flex-1 justify-center">
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary flex-1 justify-center transition-colors">
                             <i class="icon ion-close"></i>
                             Cancelar
                         </a>
@@ -79,21 +77,16 @@
                     Materias Registradas
                 </h2>
                 <div class="text-sm text-gray-500">
-                    Total: <span class="font-bold text-indigo-600">{{ $materias->count() }}</span>
+                    Total: <span class="font-bold text-indigo-600">{{ $materias->total() }}</span>
                 </div>
             </div>
 
             @if ($materias->count() > 0)
                 <div class="card-body">
-                    <div class="mb-4">
-                        <input type="text" id="searchInput" 
-                            placeholder="🔍 Buscar por nombre o clave..." 
-                            class="form-input"
-                            onkeyup="filterTable()">
-                    </div>
+                    @include('components.search-bar', ['search' => $search, 'placeholder' => 'Buscar por nombre o clave...'])
                     
                     <div class="overflow-x-auto">
-                        <table class="data-table" id="materiasTable">
+                        <table class="data-table">
                             <thead>
                                 <tr>
                                     <th style="width: 15%">Clave</th>
@@ -103,14 +96,14 @@
                             </thead>
                             <tbody>
                                 @foreach ($materias as $materia)
-                                    <tr class="materia-row">
+                                    <tr class="transition-smooth hover:bg-indigo-50">
                                         <td>
                                             <span class="badge badge-primary">{{ strtoupper($materia->clave) }}</span>
                                         </td>
                                         <td class="font-medium">{{ $materia->nombre }}</td>
                                         <td>
                                             <div class="flex gap-2">
-                                                <a href="{{ route('admin.materias.edit', $materia->id) }}" class="btn btn-primary btn-sm">
+                                                <a href="{{ route('admin.materias.edit', $materia->id) }}" class="btn btn-primary btn-sm hover-lift">
                                                     <i class="icon ion-edit"></i>
                                                     Editar
                                                 </a>
@@ -121,6 +114,11 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Pagination -->
+                    <div class="mt-6">
+                        {{ $materias->links('components.pagination') }}
+                    </div>
                 </div>
             @else
                 <div class="card-body">
@@ -128,7 +126,7 @@
                         <div class="empty-icon">📭</div>
                         <h3 class="font-bold text-gray-900 mb-2">No hay materias registradas</h3>
                         <p class="text-gray-500 mb-6">Comienza creando una nueva materia usando el formulario anterior</p>
-                        <a href="{{ route('admin.materias') }}" class="btn btn-primary">
+                        <a href="{{ route('admin.materias') }}" class="btn btn-primary hover-lift">
                             <i class="icon ion-plus"></i>
                             Crear Primera Materia
                         </a>
@@ -139,16 +137,5 @@
     </div>
 </div>
 
-<script>
-function filterTable() {
-    const input = document.getElementById('searchInput').value.toLowerCase();
-    const rows = document.querySelectorAll('.materia-row');
-    
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(input) ? '' : 'none';
-    });
-}
-</script>
-
 @endsection
+

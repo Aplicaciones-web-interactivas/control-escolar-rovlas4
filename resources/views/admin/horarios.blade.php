@@ -17,7 +17,7 @@
         </div>
 
         <!-- Form Section -->
-        <div class="card mb-8">
+        <div class="card mb-8 hover-lift">
             <div class="card-header bg-gradient-to-r from-indigo-50 to-blue-50">
                 <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
                     <i class="icon ion-plus-circled"></i>
@@ -33,11 +33,10 @@
                         <!-- Materia -->
                         <div class="form-group">
                             <label for="materia_id" class="form-label">
-                                <i class="icon ion-document-text"></i>
                                 Materia <span class="text-red-500">*</span>
                             </label>
                             <select name="materia_id" id="materia_id" required
-                                class="form-select @error('materia_id') border-red-500 @enderror">
+                                class="form-select focus-ring @error('materia_id') border-red-500 @enderror">
                                 <option value="">-- Selecciona una materia --</option>
                                 @foreach ($materias as $materia)
                                     <option value="{{ $materia->id }}" {{ old('materia_id') == $materia->id ? 'selected' : '' }}>
@@ -53,11 +52,10 @@
                         <!-- Maestro -->
                         <div class="form-group">
                             <label for="maestro_id" class="form-label">
-                                <i class="icon ion-person"></i>
                                 Maestro <span class="text-red-500">*</span>
                             </label>
                             <select name="maestro_id" id="maestro_id" required
-                                class="form-select @error('maestro_id') border-red-500 @enderror">
+                                class="form-select focus-ring @error('maestro_id') border-red-500 @enderror">
                                 <option value="">-- Selecciona un maestro --</option>
                                 @foreach ($maestros as $maestro)
                                     <option value="{{ $maestro->id }}" {{ old('maestro_id') == $maestro->id ? 'selected' : '' }}>
@@ -73,11 +71,10 @@
                         <!-- Hora Inicio -->
                         <div class="form-group">
                             <label for="hora_inicio" class="form-label">
-                                <i class="icon ion-clock"></i>
                                 Hora de Inicio <span class="text-red-500">*</span>
                             </label>
                             <input type="time" name="hora_inicio" id="hora_inicio" required
-                                class="form-input @error('hora_inicio') border-red-500 @enderror"
+                                class="form-input focus-ring @error('hora_inicio') border-red-500 @enderror"
                                 value="{{ old('hora_inicio') }}">
                             @error('hora_inicio')
                                 <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
@@ -87,11 +84,10 @@
                         <!-- Hora Fin -->
                         <div class="form-group">
                             <label for="hora_fin" class="form-label">
-                                <i class="icon ion-clock"></i>
                                 Hora de Fin <span class="text-red-500">*</span>
                             </label>
                             <input type="time" name="hora_fin" id="hora_fin" required
-                                class="form-input @error('hora_fin') border-red-500 @enderror"
+                                class="form-input focus-ring @error('hora_fin') border-red-500 @enderror"
                                 value="{{ old('hora_fin') }}">
                             @error('hora_fin')
                                 <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
@@ -102,7 +98,6 @@
                     <!-- Días -->
                     <div>
                         <label class="form-label">
-                            <i class="icon ion-calendar"></i>
                             Días de la Semana <span class="text-red-500">*</span>
                         </label>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
@@ -111,7 +106,7 @@
                                 $diasSeleccionados = old('dias') ? explode(',', old('dias')) : [];
                             @endphp
                             @foreach ($dias as $dia)
-                                <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-indigo-50 transition">
+                                <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-indigo-50 transition-smooth">
                                     <input type="checkbox" name="dias_arr[]" value="{{ $dia }}"
                                         {{ in_array($dia, $diasSeleccionados) ? 'checked' : '' }}
                                         class="rounded">
@@ -122,11 +117,11 @@
                     </div>
 
                     <div class="flex gap-3">
-                        <button type="submit" class="btn btn-primary flex-1">
+                        <button type="submit" class="btn btn-primary flex-1 transition-colors">
                             <i class="icon ion-checkmark-circled"></i>
                             Crear Horario
                         </button>
-                        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary flex-1 justify-center">
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary flex-1 justify-center transition-colors">
                             <i class="icon ion-close"></i>
                             Cancelar
                         </a>
@@ -143,12 +138,14 @@
                     Horarios Registrados
                 </h2>
                 <div class="text-sm text-gray-500">
-                    Total: <span class="font-bold text-indigo-600">{{ $horarios->count() }}</span>
+                    Total: <span class="font-bold text-indigo-600">{{ $horarios->total() }}</span>
                 </div>
             </div>
 
             @if ($horarios->count() > 0)
                 <div class="card-body">
+                    @include('components.search-bar', ['search' => $search, 'placeholder' => 'Buscar por materia o maestro...'])
+                    
                     <div class="overflow-x-auto">
                         <table class="data-table">
                             <thead>
@@ -162,7 +159,7 @@
                             </thead>
                             <tbody>
                                 @foreach ($horarios as $horario)
-                                    <tr>
+                                    <tr class="transition-smooth hover:bg-indigo-50">
                                         <td class="font-medium">{{ $horario->materia->nombre }}</td>
                                         <td>{{ $horario->maestro->nombre }}</td>
                                         <td>
@@ -172,16 +169,13 @@
                                         </td>
                                         <td>
                                             <div class="flex flex-wrap gap-1">
-                                                @foreach (array_slice(explode(',', $horario->dias), 0, 3) as $dia)
-                                                    <span class="badge badge-secondary">{{ trim(substr($dia, 0, 3)) }}</span>
+                                                @foreach (explode(',', $horario->dias) as $dia)
+                                                    <span class="badge badge-secondary">{{ substr($dia, 0, 2) }}</span>
                                                 @endforeach
-                                                @if (count(explode(',', $horario->dias)) > 3)
-                                                    <span class="badge badge-secondary">+{{ count(explode(',', $horario->dias)) - 3 }}</span>
-                                                @endif
                                             </div>
                                         </td>
                                         <td>
-                                            <a href="{{ route('admin.horarios.edit', $horario->id) }}" class="btn btn-primary btn-sm">
+                                            <a href="{{ route('admin.horarios.edit', $horario->id) }}" class="btn btn-primary btn-sm hover-lift">
                                                 <i class="icon ion-edit"></i>
                                                 Editar
                                             </a>
@@ -190,6 +184,11 @@
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="mt-6">
+                        {{ $horarios->links('components.pagination') }}
                     </div>
                 </div>
             @else

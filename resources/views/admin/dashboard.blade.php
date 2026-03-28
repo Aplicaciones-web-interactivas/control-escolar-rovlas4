@@ -84,15 +84,7 @@
                 </div>
                 <div class="card-body">
                     <div class="space-y-3 text-sm text-gray-600">
-                        <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                            <span class="font-medium text-gray-900">Sistema:</span>
-                            <span class="badge badge-primary">Control Escolar v1.0</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg border-l-4 border-green-500">
-                            <span class="font-medium text-gray-900">Estado:</span>
-                            <span class="badge badge-success">En línea ✓</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg border-l-4 border-purple-500">
+                        <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg border-l-4 border-red-500">
                             <span class="font-medium text-gray-900">Usuarios en línea:</span>
                             <span class="badge badge-purple">{{ $sesionesActivas }}</span>
                         </div>
